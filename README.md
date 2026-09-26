@@ -1,3 +1,4 @@
+```
 fct_cricket_fiesta/
 │
 ├── index.html              # සාමාන්‍ය අයට Live Score එක පේන ප්‍රධාන පිටුව
@@ -25,3 +26,4 @@ fct_cricket_fiesta/
     ├── live-viewer.js      # Supabase Realtime හරහා සාමාන්‍ය අයට live ලකුණු ගෙනෙන කේතය
     ├── admin-scorer.js     # Admin panel එකෙන් ලකුණු DB එකට යවන (Insert/Update) කේතය
     └── main.js             # Header/Footer fetch() මගින් load කරන පොදු කේතය
+    ```
