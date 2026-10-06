@@ -4,11 +4,12 @@ fct_cricket_fiesta/
 ├── index.html              # සාමාන්‍ය අයට Live Score එක පේන ප්‍රධාන පිටුව
 ├── fixtures.html           # මැච් කාලසටහන
 ├── points-table.html       # Points Table එක
+├── teams.html              # කණ්ඩායම් සහ ක්‍රීඩකයන් ඇතුලත් කරන පිටුව
 │
-├── admin/
+│── admin/
 │   ├── login.html          # Admin ලොග් වෙන Supabase Auth පිටුව
-│   ├── admin-index.html          # ලකුණු ඇතුලත් කරන Scoring Dashboard එක
-│   └── teams.html          # කණ්ඩායම් සහ ක්‍රීඩකයන් ඇතුලත් කරන පිටුව
+│   ├── admin-index.html    # ලකුණු ඇතුලත් කරන Scoring Dashboard එක
+│   
 │
 ├── components/             
 │   ├── header.html         # හැම පිටුවකටම පොදු Header එක (JS හරහා load කරයි)
