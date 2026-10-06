@@ -27,7 +27,7 @@ fetch('components/header.html')
     });
 
 // load the footer
-fetch('components/footer.html')
+fetch('/components/footer.html')
     .then(function(response){
         return response.text();
     })
