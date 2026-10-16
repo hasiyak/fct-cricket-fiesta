@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCT Cricket Fiesta | Admin Scoring Console</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">\
+
+    <link rel="stylesheet" href="/../assets/css/style.css">
+    
+</head>
+<body class="bg-[#0b131e] text-slate-50 font-sans min-h-screen">
+
+    <!-- ===== HEADER ===== -->
+    <header class="sticky top-0 z-10 bg-slate-900 border-b border-slate-800">
+        <div class="max-w-[900px] h-16 mx-auto px-4 flex items-center justify-between">
+            <h1 class="text-lg font-extrabold tracking-wider">
+                FCT FIESTA <span class="text-emerald-500">SCORING CONSOLE</span>
+            </h1>
+            <div class="flex items-center gap-3 text-xs text-slate-400">
+                <a href="/index.html" class="hover:text-slate-200 transition">View live site</a>
+                <span id="admin-email"></span>
+                <button id="logout-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-50 text-xs font-bold py-2 px-3 rounded-xl border border-transparent transition active:scale-95">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-[900px] mx-auto p-4 sm:py-6 space-y-6">
+
+        <!-- Toast notification -->
+        <div id="toast" class=" fixed top-20 right-4 z-30 px-4 py-3 rounded-xl text-sm font-semibold shadow-lg"></div>
+
+        <!-- ===== 1. SELECT / CREATE MATCH ===== -->
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+            <div class="flex flex-wrap gap-4 items-end">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Select Match</label>
+                    <select id="match-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-50 focus:outline-none focus:border-emerald-500 transition">
+                        <option value="">Loading matches…</option>
+                    </select>
+                </div>
+                <button id="toggle-create" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm px-4 py-3 rounded-xl transition active:scale-95">
+                    + New Match
+                </button>
+            </div>
+
+            <!-- New match form -->
+            <form id="create-form" class="hidden grid grid-cols-1 sm:grid-cols-4 gap-3 mt-5 pt-5 border-t border-slate-800">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Team A</label>
+                    <input id="new-team-a" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-50 focus:outline-none focus:border-emerald-500 transition" required placeholder="e.g. Computing">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Team B</label>
+                    <input id="new-team-b" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-50 focus:outline-none focus:border-emerald-500 transition" required placeholder="e.g. Management">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Overs</label>
+                    <input id="new-overs" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-50 focus:outline-none focus:border-emerald-500 transition" type="number" min="1" value="6" required>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm px-4 py-3 rounded-xl transition active:scale-95">
+                        Create Match
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- ===== SCORING PANEL (Revealed when match is selected) ===== -->
+        <section id="scoring-panel" class=" space-y-6">
+
+            <!-- ===== 2. SCOREBOARD ===== -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center">
+                <span id="status-badge" class="inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-slate-700 text-slate-300">upcoming</span>
+                <span id="innings-label" class="text-sm text-slate-400 block mt-1"></span>
+                <p id="match-title" class="text-sm text-slate-400"></p>
+                <p id="batting-team" class="font-bold text-base"></p>
+                <p id="score-line" class="text-5xl sm:text-6xl font-extrabold text-amber-400 my-2">0/0</p>
+                <p class="text-sm text-slate-400">
+                    Overs: <span id="overs-line">0.0</span> / <span id="max-overs">0</span>
+                    &middot; Extras: <span id="extras-line">0</span>
+                </p>
+                <p id="target-line" class="hidden text-emerald-500 text-sm font-semibold mt-2"></p>
+            </div>
+
+            <!-- ===== 3. PLAYERS ===== -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex justify-between items-center">
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Striker</span>
+                        <p id="striker-name" class="font-semibold">—</p>
+                    </div>
+                </div>
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex justify-between items-center">
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Non-striker</span>
+                        <p id="non-striker-name" class="font-semibold">—</p>
+                    </div>
+                </div>
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex justify-between items-center">
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Bowler</span>
+                        <p id="bowler-name" class="font-semibold">—</p>
+                    </div>
+                    <button id="change-bowler-btn" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs px-3 py-2 rounded-xl transition active:scale-95">
+                        Change
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===== 4. SCORING BUTTONS ===== -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Runs off the bat</h2>
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-6">
+                    <button class="run-btn bg-slate-800 hover:bg-slate-700 text-slate-50 text-2xl font-extrabold py-5 rounded-2xl transition active:scale-95" data-runs="0">0</button>
+                    <button class="run-btn bg-slate-800 hover:bg-slate-700 text-slate-50 text-2xl font-extrabold py-5 rounded-2xl transition active:scale-95" data-runs="1">1</button>
+                    <button class="run-btn bg-slate-800 hover:bg-slate-700 text-slate-50 text-2xl font-extrabold py-5 rounded-2xl transition active:scale-95" data-runs="2">2</button>
+                    <button class="run-btn bg-slate-800 hover:bg-slate-700 text-slate-50 text-2xl font-extrabold py-5 rounded-2xl transition active:scale-95" data-runs="3">3</button>
+                    <button class="run-btn bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-2xl font-extrabold py-5 rounded-2xl transition active:scale-95" data-runs="4">4</button>
+                    <button class="run-btn bg-amber-400/20 hover:bg-amber-400/30 text-amber-400 border border-amber-400/40 text-2xl font-extrabold py-5 rounded-2xl transition active:scale-95" data-runs="6">6</button>
+                </div>
+
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Extras</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                    <button class="extra-btn bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-400/30 text-sm font-bold py-3 px-4 rounded-xl transition active:scale-95" data-extra="wide">Wide +1</button>
+                    <button class="extra-btn bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-400/30 text-sm font-bold py-3 px-4 rounded-xl transition active:scale-95" data-extra="noball">No Ball +1</button>
+                    <button class="extra-btn bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-400/30 text-sm font-bold py-3 px-4 rounded-xl transition active:scale-95" data-extra="bye">Bye +1</button>
+                    <button class="extra-btn bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-400/30 text-sm font-bold py-3 px-4 rounded-xl transition active:scale-95" data-extra="legbye">Leg Bye +1</button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="wicket-btn" class="bg-red-500/20 hover:bg-red-500/30 text-red-500 border border-red-500/40 font-bold text-sm py-3 px-4 rounded-xl transition active:scale-95">WICKET</button>
+                    <button id="undo-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-50 font-bold text-sm py-3 px-4 rounded-xl transition active:scale-95">Undo last ball</button>
+                </div>
+            </div>
+
+            <!-- ===== 5. MATCH CONTROLS ===== -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Match Controls</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button id="start-btn" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm py-3 px-4 rounded-xl transition active:scale-95">Start Match</button>
+                    <button id="end-innings-btn" class="bg-amber-400/20 hover:bg-amber-400/30 text-amber-400 border border-amber-400/40 font-bold text-sm py-3 px-4 rounded-xl transition active:scale-95">End Innings</button>
+                    <button id="finish-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-50 font-bold text-sm py-3 px-4 rounded-xl transition active:scale-95">Finish Match</button>
+                </div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mt-4 mb-2">Result note (optional)</label>
+                <input id="result-note" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-50 focus:outline-none focus:border-emerald-500 transition" placeholder="e.g. Computing won by 12 runs">
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== CHANGE BOWLER POPUP ===== -->
+    <div id="bowler-modal" class="hidden fixed inset-0 z-20 bg-black/70 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-[380px] shadow-2xl">
+            <h3 class="text-lg font-bold mb-4">Change Bowler</h3>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Select new bowler</label>
+            <select id="bowler-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-50 focus:outline-none focus:border-emerald-500 transition mb-5">
+                <option value="">— Choose bowler —</option>
+            </select>
+            <div class="grid grid-cols-2 gap-3">
+                <button id="bowler-cancel" class="bg-slate-800 hover:bg-slate-700 text-slate-50 font-bold text-sm py-3 px-4 rounded-xl transition active:scale-95">Cancel</button>
+                <button id="bowler-confirm" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm py-3 px-4 rounded-xl transition active:scale-95">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main scoring logic -->
+    <script type="module" src="/js/admin-scorer.js"></script>
+
+    <!-- Popup open / close -->
+    <script>
+        const popup = document.getElementById('bowler-modal');
+
+        function openPopup()  { popup.classList.remove('hidden'); }
+        function closePopup() { popup.classList.add('hidden'); }
+
+        document.getElementById('change-bowler-btn').addEventListener('click', openPopup);
+        document.getElementById('bowler-cancel').addEventListener('click', closePopup);
+        document.getElementById('bowler-confirm').addEventListener('click', closePopup);
+        popup.addEventListener('click', (e) => { if (e.target === popup) closePopup(); });
+    </script>
+</body>
+</html>
